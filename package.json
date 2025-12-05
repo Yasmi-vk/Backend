@@ -1,0 +1,11 @@
+{
+    "name": "yasmi",
+    "private": true,
+    "scripts": {
+        "start": "node app"
+    },
+    "dependencies": {
+        "express": "^5.1.0",
+        "mongodb": "^3.6.3"
+    }
+}
