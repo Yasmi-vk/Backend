@@ -43,7 +43,7 @@ app.use((req, res, next) => {
 app.get("/images/:imageName", (req, res) => {
   const filePath = path.join(__dirname, "images", req.params.imageName);
 
-  fs.access(filePath, fs.constants.F_Ok, (err) => {
+  fs.access(filePath, fs.constants.F_OK, (err) => {
     if (err) return res.status(404).json({ error: "Image not found" });
     res.sendFile(filePath);
   });
