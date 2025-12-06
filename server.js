@@ -6,7 +6,9 @@ const { MongoClient, ObjectId } = require("mongodb");
 const app = express();
 
 app.use(express.json());
-app.set("port", 3000);
+
+const PORT = process.env.PORT || 3000;
+app.set("port", PORT);
 
 // ----------------- LOGGER -----------------
 app.use((req, res, next) => {
@@ -50,8 +52,9 @@ app.get("/images/:imageName", (req, res) => {
 });
 
 // ----------------- MONGODB CONNECTION -----------------
-const mongoUri =
-  "mongodb+srv://yasmidb:y1234@cluster0.zgmyzli.mongodb.net/webstore?retryWrites=true&w=majority";
+// const mongoUri =
+//   "mongodb+srv://yasmidb:y1234@cluster0.zgmyzli.mongodb.net/webstore?retryWrites=true&w=majority";
+const mongoUri = process.env.MONGO_URI;
 
 let db = null;
 let client = null;
@@ -181,11 +184,11 @@ app.use((req, res) => {
 connectToMongo()
   .then(() => {
     app.listen(app.get("port"), () => {
-      console.log(`🚀 Server running on http://localhost:${app.get("port")}`);
+      console.log(`Server running on http://localhost:${app.get("port")}`);
     });
   })
   .catch(() => {
     console.error(
-      "❌ Failed to connect to MongoDB. Server NOT started. Check your Atlas settings / URI."
+      "Failed to connect to MongoDB. Server NOT started. Check your Atlas settings / URI."
     );
   });
