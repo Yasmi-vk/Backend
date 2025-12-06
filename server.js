@@ -53,7 +53,7 @@ app.get("/images/:imageName", (req, res) => {
 
 // ----------------- MONGODB CONNECTION -----------------
  const mongoUri =
- process.env.MONGO_URI; ||
+ process.env.MONGO_URI ||
  "mongodb+srv://yasmidb:y1234@cluster0.zgmyzli.mongodb.net/webstore?retryWrites=true&w=majority";
  
 
