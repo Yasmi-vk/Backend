@@ -2,7 +2,7 @@
     "name": "yasmi",
     "private": true,
     "scripts": {
-        "start": "node app"
+        "start": "node server.js"
     },
     "dependencies": {
         "express": "^5.1.0",
