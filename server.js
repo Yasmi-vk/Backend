@@ -89,6 +89,17 @@ app.get("/", (req, res) => {
 
 // GET /collection/lessons  (frontend)
 app.get("/collection/lessons", ensureDb, (req, res, next) => {
+  const search = (req.query.search || "").trim();
+
+  let filter = {};
+  if(search) {filter = {
+    $or: [
+      {subject: {$regex: search, $options: "i"} },
+      {location: {$regex: search, $options: "i"} }
+    ]
+  };
+  }
+  
   db.collection("lessons")
     .find({})
     .toArray((err, results) => {
