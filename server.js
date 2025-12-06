@@ -52,9 +52,10 @@ app.get("/images/:imageName", (req, res) => {
 });
 
 // ----------------- MONGODB CONNECTION -----------------
-// const mongoUri =
-//   "mongodb+srv://yasmidb:y1234@cluster0.zgmyzli.mongodb.net/webstore?retryWrites=true&w=majority";
-const mongoUri = process.env.MONGO_URI;
+ const mongoUri =
+ process.env.MONGO_URI; ||
+ "mongodb+srv://yasmidb:y1234@cluster0.zgmyzli.mongodb.net/webstore?retryWrites=true&w=majority";
+ 
 
 let db = null;
 let client = null;
