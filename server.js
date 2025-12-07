@@ -99,9 +99,9 @@ app.get("/collection/lessons", ensureDb, (req, res, next) => {
     ]
   };
   }
-  
+
   db.collection("lessons")
-    .find({})
+    .find(filter)
     .toArray((err, results) => {
       if (err) return next(err);
       res.json(results);
