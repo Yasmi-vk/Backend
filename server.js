@@ -88,17 +88,59 @@ app.get("/", (req, res) => {
 });
 
 // GET /collection/lessons  (frontend)
-app.get("/collection/lessons", ensureDb, (req, res, next) => {
-  const search = (req.query.search || "").trim();
+// app.get("/collection/lessons", ensureDb, (req, res, next) => {
+//   const search = (req.query.search || "").trim();
 
-  let filter = {};
-  if(search) {filter = {
-    $or: [
-      {subject: {$regex: search, $options: "i"} },
-      {location: {$regex: search, $options: "i"} }
-    ]
-  };
+//   let filter = {};
+//   if(search) {filter = {
+//     $or: [
+//       {subject: {$regex: search, $options: "i"} },
+//       {location: {$regex: search, $options: "i"} }
+//     ]
+//   };
+//   }
+
+//   db.collection("lessons")
+//     .find(filter)
+//     .toArray((err, results) => {
+//       if (err) return next(err);
+//       res.json(results);
+//     });
+// });
+
+app.get("/lessons", ensureDb, (req, res, next) => {
+  db.collection("lessons")
+    .find({})
+    .toArray((err, results) => {
+      if (err) return next(err);
+      res.json(results);
+    });
+});
+
+// ✅ GET /search?q=... - backend full-text style search
+app.get("/search", ensureDb, (req, res, next) => {
+  const q = (req.query.q || "").trim();
+
+  if (!q) {
+    // Empty search → return empty array; frontend decides what to show
+    return res.json([]);
   }
+
+  const numeric = Number(q);
+
+  const orConditions = [
+    { subject: { $regex: q, $options: "i" } }, // your current field
+    { topic:   { $regex: q, $options: "i" } }, // coursework field name
+    { title:   { $regex: q, $options: "i" } }, // in case you used 'title'
+    { location:{ $regex: q, $options: "i" } }
+  ];
+
+  // If q is a number, also search price and spaces
+  if (!Number.isNaN(numeric)) {
+    orConditions.push({ price: numeric }, { spaces: numeric });
+  }
+
+  const filter = { $or: orConditions };
 
   db.collection("lessons")
     .find(filter)
@@ -109,7 +151,7 @@ app.get("/collection/lessons", ensureDb, (req, res, next) => {
 });
 
 // PUT /collection/lessons/:id  - update lesson (spaces, etc.)
-app.put("/collection/lessons/:id", ensureDb, (req, res, next) => {
+app.put("/lessons/:id", ensureDb, (req, res, next) => {
   const param = req.params.id;
   let filter = null;
 
@@ -170,7 +212,7 @@ function insertOrder(req, res, next) {
 app.post("/orders", ensureDb, insertOrder);
 
 // POST /collection/orders  (frontend)
-app.post("/collection/orders", ensureDb, insertOrder);
+// app.post("/collection/orders", ensureDb, insertOrder);
 
 // GET /orders (view orders)
 app.get("/orders", ensureDb, (req, res, next) => {
