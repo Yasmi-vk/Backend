@@ -10,7 +10,7 @@ app.use(express.json());
 const PORT = process.env.PORT || 3000;
 app.set("port", PORT);
 
-// ----------------- LOGGER -----------------
+// logger
 app.use((req, res, next) => {
   const now = new Date().toISOString();
   console.log(`[${now}] ${req.method} ${req.url}`);
@@ -20,7 +20,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// ----------------- CORS -----------------
+// cors
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Credentials", "true");
@@ -35,13 +35,13 @@ app.use((req, res, next) => {
   next();
 });
 
-// Preflight handler for ALL OPTIONS requests
+// Pre handler for all requests
 app.use((req, res, next) => {
   if (req.method === "OPTIONS") return res.sendStatus(200);
   next();
 });
 
-// ----------------- STATIC IMAGES -----------------
+// static image
 app.get("/images/:imageName", (req, res) => {
   const filePath = path.join(__dirname, "images", req.params.imageName);
 
@@ -51,7 +51,7 @@ app.get("/images/:imageName", (req, res) => {
   });
 });
 
-// ----------------- MONGODB CONNECTION -----------------
+// monodb connection
  const mongoUri =
  process.env.MONGO_URI ||
  "mongodb+srv://yasmidb:y1234@cluster0.zgmyzli.mongodb.net/webstore?retryWrites=true&w=majority";
@@ -65,9 +65,9 @@ async function connectToMongo() {
     console.log("Connecting to MongoDB Atlas...");
     client = await MongoClient.connect(mongoUri);
     db = client.db("webstore");
-    console.log("✅ Connected to MongoDB (webstore)");
+    console.log(" Connected to MongoDB (webstore)");
   } catch (err) {
-    console.error("❌ MongoDB Connection Error:", err.message);
+    console.error(" MongoDB Connection Error:", err.message);
     throw err;
   }
 }
@@ -80,7 +80,7 @@ function ensureDb(req, res, next) {
   next();
 }
 
-// ----------------- ROUTES -----------------
+// routes
 
 // Root
 app.get("/", (req, res) => {
@@ -117,12 +117,11 @@ app.get("/lessons", ensureDb, (req, res, next) => {
     });
 });
 
-// ✅ GET /search?q=... - backend full-text style search
+// GET backend  search
 app.get("/search", ensureDb, (req, res, next) => {
   const q = (req.query.q || "").trim();
 
   if (!q) {
-    // Empty search → return empty array; frontend decides what to show
     return res.json([]);
   }
 
@@ -179,7 +178,6 @@ app.put("/lessons/:id", ensureDb, (req, res, next) => {
   );
 });
 
-// Insert order helper
 function insertOrder(req, res, next) {
   const order = req.body || {};
 
@@ -224,7 +222,7 @@ app.get("/orders", ensureDb, (req, res, next) => {
     });
 });
 
-// ----------------- ERROR HANDLERS -----------------
+// error handlers
 app.use((err, req, res, next) => {
   console.error("SERVER ERROR:", err);
   res.status(500).json({ error: "Internal Server Error" });
@@ -234,7 +232,7 @@ app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });
 });
 
-// ----------------- START SERVER AFTER DB CONNECTS -----------------
+// start server
 connectToMongo()
   .then(() => {
     app.listen(app.get("port"), () => {
